@@ -16,26 +16,12 @@ Core member of **SynlysisAI**. I build reproducible AI4S systems and full-stack 
 
 </div>
 
-<table align="center" width="92%">
-  <tr>
-    <td width="100%" valign="top">
-      <h3>Current Signal</h3>
-      <table align="center" width="100%">
-        <tr>
-          <td width="50%" align="center"><img width="96%" height="220" src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=FangYikaii&theme=github&utcOffset=8" alt="Productive time" /></td>
-          <td width="50%" align="center"><img width="96%" height="220" src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=FangYikaii&theme=github" alt="Profile summary" /></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-
 <p align="center">
-  <img width="100%" height="420" src="./profile-3d-contrib/profile-green.svg" alt="3D contribution heatmap" />
+  <img width="92%" src="./assets/github-signal.svg" alt="Current GitHub signal" />
 </p>
 
 <p align="center">
-  <img width="100%" height="260" src="https://github-readme-activity-graph.vercel.app/graph?username=FangYikaii&hide_border=true&radius=8&area=true&custom_title=Contribution%20Field&bg_color=ffffff&color=24292f&line=5f6f64&point=2f4858&area_color=cbd8d0&title_color=24292f" alt="Contribution field" />
+  <img width="100%" height="420" src="./profile-3d-contrib/profile-green.svg" alt="3D contribution heatmap" />
 </p>
 
 <table>
