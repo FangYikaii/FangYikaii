@@ -93,7 +93,7 @@ ML Systems      Optimization / Agents / Evaluation / Data-Centric AI
 
 <div align="center">
 
-<sub>Turning scientific and industrial ideas into systems that run, reproduce, and scale with teams.</sub>
+<sub>Turning scientific and industrial ideas into systems that run, reproduce, and scale with engineering teams.</sub>
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=120&section=footer&color=0:FACC15,35:FF2D95,70:7C3AED,100:00D8FF" alt="profile footer wave" />
 
