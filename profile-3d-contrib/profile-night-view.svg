@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
+  <title id="title">3D contribution heatmap</title>
+  <desc id="desc">A subdued 3D contribution heatmap placeholder. GitHub Actions refreshes it with live contribution data.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#121417"/>
+      <stop offset="0.52" stop-color="#1b1f22"/>
+      <stop offset="1" stop-color="#24302a"/>
+    </linearGradient>
+    <linearGradient id="top" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#d7ded4"/>
+      <stop offset="1" stop-color="#6f8a76"/>
+    </linearGradient>
+    <linearGradient id="side" x1="0" x2="1">
+      <stop offset="0" stop-color="#38443c"/>
+      <stop offset="1" stop-color="#18201b"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+  </defs>
+  <rect width="960" height="520" rx="18" fill="url(#bg)"/>
+  <g opacity="0.14" stroke="#d7ded4" stroke-width="1">
+    <path d="M92 405h780M134 365h688M176 325h596M218 285h504M260 245h412"/>
+    <path d="M160 438 402 168M292 448 490 156M426 452 580 160M560 444 672 182M694 430 760 220"/>
+  </g>
+  <text x="54" y="70" fill="#f4f1ea" font-size="29" font-weight="700" font-family="Georgia, 'Times New Roman', serif">Contribution Topography</text>
+  <text x="56" y="101" fill="#a8b0a8" font-size="14" font-family="Inter, Arial, sans-serif">AI4S / FDE research engineering signal</text>
+  <g transform="translate(122 132)" filter="url(#shadow)">
+    <g transform="skewY(-20)">
+      <rect x="0" y="250" width="24" height="24" rx="3" fill="#232a25"/>
+      <rect x="36" y="236" width="24" height="38" rx="3" fill="#405248"/>
+      <rect x="72" y="220" width="24" height="54" rx="3" fill="#607a68"/>
+      <rect x="108" y="245" width="24" height="29" rx="3" fill="#2d3831"/>
+      <rect x="144" y="198" width="24" height="76" rx="3" fill="#8da18f"/>
+      <rect x="180" y="170" width="24" height="104" rx="3" fill="#cbd8d0"/>
+      <rect x="216" y="232" width="24" height="42" rx="3" fill="#405248"/>
+      <rect x="252" y="210" width="24" height="64" rx="3" fill="#6f8a76"/>
+      <rect x="288" y="155" width="24" height="119" rx="3" fill="#d7ded4"/>
+      <rect x="324" y="192" width="24" height="82" rx="3" fill="#8da18f"/>
+      <rect x="360" y="238" width="24" height="36" rx="3" fill="#38443c"/>
+      <rect x="396" y="130" width="24" height="144" rx="3" fill="#cbd8d0"/>
+      <rect x="432" y="206" width="24" height="68" rx="3" fill="#607a68"/>
+      <rect x="468" y="178" width="24" height="96" rx="3" fill="#9caf9f"/>
+      <rect x="504" y="232" width="24" height="42" rx="3" fill="#405248"/>
+      <rect x="540" y="118" width="24" height="156" rx="3" fill="#f4f1ea"/>
+      <rect x="576" y="164" width="24" height="110" rx="3" fill="#8da18f"/>
+      <rect x="612" y="208" width="24" height="66" rx="3" fill="#6f8a76"/>
+      <rect x="648" y="228" width="24" height="46" rx="3" fill="#405248"/>
+      <rect x="684" y="184" width="24" height="90" rx="3" fill="#cbd8d0"/>
+    </g>
+  </g>
+  <text x="56" y="468" fill="#a8b0a8" font-size="13" font-family="Inter, Arial, sans-serif">This placeholder is replaced by live 3D contribution data after the GitHub Action runs.</text>
+</svg>

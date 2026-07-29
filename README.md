@@ -2,10 +2,10 @@
 
 # FangYikaii
 
-**Full-stack engineer for scientific and industrial systems**  
-Mechatronics · Systems Engineering · Automation · Industrial Software · AI4S
+**AI4S / FDE full-stack engineer**  
+Foundation Design for Engineering · Scientific Agents · Research Software · Industrial AI
 
-Core member of **SynlysisAI**, building reproducible software systems for scientific discovery, industrial automation, process optimization, and intelligent experimental workflows.
+Core member of **SynlysisAI**. I build reproducible AI4S and FDE systems for scientific discovery, engineering design, process optimization, and intelligent experimental workflows. My background in mechatronics, systems engineering, automation, and industrial software forms the engineering substrate behind this work.
 
 <p>
   <a href="https://github.com/FangYikaii"><img src="https://img.shields.io/badge/GitHub-FangYikaii-24292f?style=flat-square&logo=github&logoColor=white" alt="GitHub FangYikaii" /></a>
@@ -19,26 +19,31 @@ Core member of **SynlysisAI**, building reproducible software systems for scient
 <table>
   <tr>
     <td width="42%" valign="top">
-      <h3>Focus</h3>
+      <h3>Research Engineering Focus</h3>
       <p>
-        I work at the intersection of mechanical-electrical systems, automation,
-        industrial software, and AI for science. My default style is to turn
-        research ideas into systems that can run, reproduce, and be maintained by teams.
+        I work on AI4S and Foundation Design for Engineering: scientific agents,
+        experiment-space design, optimization loops, domain model evaluation,
+        and full-stack tools that make research workflows executable.
       </p>
       <p>
-        <b>Methods:</b> AI4S, agents, optimization, data-centric ML, full-stack tooling.<br/>
-        <b>Domains:</b> chemistry, materials, semiconductor process, closed-loop experiments.
+        <b>Core:</b> AI4S, FDE, agents, optimization, scientific software.<br/>
+        <b>Foundation:</b> mechatronics, systems engineering, automation, industrial software.
       </p>
     </td>
-    <td width="58%" valign="top" align="center">
-      <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=FangYikaii&theme=github" alt="GitHub stats" />
-      <img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=FangYikaii&theme=github&utcOffset=8" alt="Productive time" />
+    <td width="58%" valign="top">
+      <h3>Current Signal</h3>
+      <table>
+        <tr>
+          <td width="38%" align="center"><img width="100%" src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=FangYikaii&theme=github&utcOffset=8" alt="Productive time" /></td>
+          <td width="62%" align="center"><img width="100%" src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=FangYikaii&theme=github" alt="Profile summary" /></td>
+        </tr>
+      </table>
     </td>
   </tr>
 </table>
 
 <p align="center">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=FangYikaii&theme=github" alt="Profile summary" />
+  <img src="./profile-3d-contrib/profile-night-view.svg" alt="3D contribution heatmap" />
 </p>
 
 <p align="center">
@@ -47,8 +52,8 @@ Core member of **SynlysisAI**, building reproducible software systems for scient
 
 <table>
   <tr>
-    <td width="33%" valign="top"><b>AI4S Systems</b><br/>Scientific modeling, experiment workflows, evaluation, and reproducible research tooling.</td>
-    <td width="33%" valign="top"><b>Industrial Software</b><br/>Dashboards, APIs, automation platforms, traceable data pipelines, and decision support.</td>
-    <td width="33%" valign="top"><b>Automation</b><br/>Human-in-the-loop agents, process optimization, closed-loop experiments, and system integration.</td>
+    <td width="33%" valign="top"><b>AI4S Systems</b><br/>Scientific agents, model evaluation, experiment workflows, and reproducible research tooling.</td>
+    <td width="33%" valign="top"><b>FDE</b><br/>Engineering design loops that connect domain constraints, optimization objectives, simulation, and decision support.</td>
+    <td width="33%" valign="top"><b>Engineering Substrate</b><br/>Mechatronics, automation, systems integration, industrial software, and full-stack implementation.</td>
   </tr>
 </table>
