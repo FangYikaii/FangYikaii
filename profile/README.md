@@ -1,19 +1,19 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&height=210&color=0:00D8FF,35:7C3AED,70:FF2D95,100:FACC15&text=fyk&fontColor=FFFFFF&fontSize=72&fontAlignY=38&desc=Full-Stack%20Engineer%20%7C%20AI4S%20%7C%20Industrial%20Automation&descAlignY=58&animation=fadeIn" alt="fyk profile banner" />
+<img src="https://capsule-render.vercel.app/api?type=waving&height=210&color=0:00D8FF,35:7C3AED,70:FF2D95,100:FACC15&text=FangYikaii&fontColor=FFFFFF&fontSize=72&fontAlignY=38&desc=Full-Stack%20Engineer%20%7C%20AI4S%20%7C%20Industrial%20Automation&descAlignY=58&animation=fadeIn" alt="FangYikaii profile banner" />
 
-# fyk
+# FangYikaii
 
 **Full-Stack Engineer across Mechatronics, Systems Engineering, Automation, Industrial Software, and AI4S**
 
 Core member of SynlysisAI. I build reproducible software systems for scientific discovery, industrial automation, chemistry and materials modeling, semiconductor process optimization, and intelligent experimental workflows.
 
 <p>
-  <a href="https://github.com/fyk">
-    <img src="https://img.shields.io/badge/GitHub-fyk-0d1117?style=for-the-badge&logo=github&logoColor=white" alt="GitHub fyk" />
+  <a href="https://github.com/FangYikaii">
+    <img src="https://img.shields.io/badge/GitHub-FangYikaii-0d1117?style=for-the-badge&logo=github&logoColor=white" alt="GitHub FangYikaii" />
   </a>
   <img src="https://img.shields.io/badge/SynlysisAI-Core%20Member-00d8ff?style=for-the-badge&logo=github&logoColor=white" alt="SynlysisAI Core Member" />
-  <a href="https://github.com/search?q=author%3Afyk+is%3Apr+is%3Amerged&type=pullrequests">
+  <a href="https://github.com/search?q=author%3AFangYikaii+is%3Apr+is%3Amerged&type=pullrequests">
     <img src="https://img.shields.io/badge/Merged%20PRs-GitHub%20Search-22c55e?style=for-the-badge&logo=git&logoColor=white" alt="Merged PRs" />
   </a>
 </p>
@@ -42,16 +42,16 @@ ML Systems      Optimization / Agents / Evaluation / Data-Centric AI
 
 <div align="center">
 
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=fyk&theme=radical" alt="GitHub stats" height="170" />
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=fyk&theme=radical&utcOffset=8" alt="Productive time" height="170" />
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=fyk&theme=radical" alt="Repositories per language" height="170" />
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=fyk&theme=radical" alt="Most committed languages" height="170" />
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=FangYikaii&theme=radical" alt="GitHub stats" height="170" />
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=FangYikaii&theme=radical&utcOffset=8" alt="Productive time" height="170" />
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=FangYikaii&theme=radical" alt="Repositories per language" height="170" />
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=FangYikaii&theme=radical" alt="Most committed languages" height="170" />
 
 </div>
 
 <div align="center">
 
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=fyk&theme=radical" alt="Profile summary" />
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=FangYikaii&theme=radical" alt="Profile summary" />
 
 </div>
 
@@ -59,7 +59,7 @@ ML Systems      Optimization / Agents / Evaluation / Data-Centric AI
 
 <div align="center">
 
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=fyk&theme=redical&hide_border=true&radius=8&area=true&custom_title=Contribution%20Heatmap&bg_color=0D1117&color=F0F6FC&line=FF2D95&point=00D8FF&area_color=7C3AED&title_color=FACC15" alt="Contribution activity graph" />
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=FangYikaii&theme=redical&hide_border=true&radius=8&area=true&custom_title=Contribution%20Heatmap&bg_color=0D1117&color=F0F6FC&line=FF2D95&point=00D8FF&area_color=7C3AED&title_color=FACC15" alt="Contribution activity graph" />
 
 </div>
 
@@ -85,9 +85,9 @@ ML Systems      Optimization / Agents / Evaluation / Data-Centric AI
 ## Quick Links
 
 - SynlysisAI: core member identity shown above. A public organization link can be added once confirmed.
-- GitHub: <https://github.com/fyk>
-- Merged PRs: <https://github.com/search?q=author%3Afyk+is%3Apr+is%3Amerged&type=pullrequests>
-- Recent commits: <https://github.com/search?q=author%3Afyk&type=commits>
+- GitHub: <https://github.com/FangYikaii>
+- Merged PRs: <https://github.com/search?q=author%3AFangYikaii+is%3Apr+is%3Amerged&type=pullrequests>
+- Recent commits: <https://github.com/search?q=author%3AFangYikaii&type=commits>
 
 ---
 
