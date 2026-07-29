@@ -1,100 +1,95 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&height=210&color=0:00D8FF,35:7C3AED,70:FF2D95,100:FACC15&text=FangYikaii&fontColor=FFFFFF&fontSize=72&fontAlignY=38&desc=Full-Stack%20Engineer%20%7C%20AI4S%20%7C%20Industrial%20Automation&descAlignY=58&animation=fadeIn" alt="FangYikaii profile banner" />
+<img src="https://capsule-render.vercel.app/api?type=waving&height=185&color=0:00D8FF,30:7C3AED,65:FF2D95,100:FACC15&text=FangYikaii&fontColor=FFFFFF&fontSize=68&fontAlignY=35&desc=Mechatronics%20%7C%20Systems%20Engineering%20%7C%20Industrial%20Software%20%7C%20AI4S&descAlignY=58&animation=fadeIn" alt="FangYikaii profile banner" />
 
-# FangYikaii
-
-**Full-Stack Engineer across Mechatronics, Systems Engineering, Automation, Industrial Software, and AI4S**
-
-Core member of SynlysisAI. I build reproducible software systems for scientific discovery, industrial automation, chemistry and materials modeling, semiconductor process optimization, and intelligent experimental workflows.
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=2600&pause=700&color=00D8FF&center=true&vCenter=true&width=980&lines=Full-Stack+Engineer+for+scientific+and+industrial+systems;Core+member+of+SynlysisAI;Building+automation%2C+AI4S%2C+optimization%2C+and+research+tooling" alt="Typing profile headline" />
 
 <p>
-  <a href="https://github.com/FangYikaii">
-    <img src="https://img.shields.io/badge/GitHub-FangYikaii-0d1117?style=for-the-badge&logo=github&logoColor=white" alt="GitHub FangYikaii" />
-  </a>
+  <a href="https://github.com/FangYikaii"><img src="https://img.shields.io/badge/GitHub-FangYikaii-0d1117?style=for-the-badge&logo=github&logoColor=white" alt="GitHub FangYikaii" /></a>
   <img src="https://img.shields.io/badge/SynlysisAI-Core%20Member-00d8ff?style=for-the-badge&logo=github&logoColor=white" alt="SynlysisAI Core Member" />
-  <a href="https://github.com/search?q=author%3AFangYikaii+is%3Apr+is%3Amerged&type=pullrequests">
-    <img src="https://img.shields.io/badge/Merged%20PRs-GitHub%20Search-22c55e?style=for-the-badge&logo=git&logoColor=white" alt="Merged PRs" />
-  </a>
+  <a href="https://github.com/search?q=author%3AFangYikaii+is%3Apr+is%3Amerged&type=pullrequests"><img src="https://img.shields.io/badge/Merged%20PRs-GitHub%20Search-22c55e?style=for-the-badge&logo=git&logoColor=white" alt="Merged PRs" /></a>
+  <a href="https://github.com/search?q=author%3AFangYikaii&type=commits"><img src="https://img.shields.io/badge/Recent%20Commits-Live%20Search-ff2d95?style=for-the-badge&logo=github&logoColor=white" alt="Recent commits" /></a>
 </p>
+
+**Full-stack engineer across mechatronics, systems engineering, automation, industrial software, and AI4S.**  
+I build reproducible software systems for scientific discovery, industrial automation, chemistry and materials modeling, semiconductor process optimization, and intelligent experimental workflows.
 
 </div>
 
 ---
 
-## Operating Stack
+<table>
+  <tr>
+    <td width="40%" valign="top">
+      <h3>Engineer OS</h3>
+      <pre>Domains      Mechatronics / AI4S / Automation
+Industrial   Process optimization / Digital workflows
+Software     Python / TypeScript / Full-stack systems
+ML Systems   Agents / Evaluation / Data-centric AI</pre>
+    </td>
+    <td width="60%" valign="top">
+      <h3>Toolchain</h3>
+      <p align="center">
+        <img src="https://skillicons.dev/icons?i=py,ts,react,nodejs,fastapi,pytorch,docker,git,githubactions,linux,postgres,mongodb&theme=dark&perline=12" alt="Technical skill icons" />
+      </p>
+    </td>
+  </tr>
+</table>
 
-```txt
-Domains         Mechatronics / Systems Engineering / Automation / AI4S
-Industrial      Industrial Software / Process Optimization / Digital Workflows
-Engineering     Python / TypeScript / Full-Stack Tooling / Reproducible Pipelines
-Research        Chemistry / Materials / Semiconductor Process / Scientific Modeling
-ML Systems      Optimization / Agents / Evaluation / Data-Centric AI
-```
+## Live Signal Board
 
-## Contribution Dashboard
+<table>
+  <tr>
+    <td width="50%"><img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=FangYikaii&theme=radical" alt="GitHub stats" /></td>
+    <td width="50%"><img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=FangYikaii&theme=radical&utcOffset=8" alt="Productive time" /></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=FangYikaii&theme=radical" alt="Repositories per language" /></td>
+    <td width="50%"><img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=FangYikaii&theme=radical" alt="Most committed languages" /></td>
+  </tr>
+</table>
 
-<div align="center">
+<p align="center">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=FangYikaii&theme=radical" alt="Profile summary" />
+</p>
 
-<img src="https://skillicons.dev/icons?i=py,ts,react,nodejs,docker,git,githubactions,linux,postgres,fastapi,pytorch&theme=dark&perline=11" alt="Technical skill icons" />
+## Contribution Visuals
 
-</div>
-
-<div align="center">
-
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=FangYikaii&theme=radical" alt="GitHub stats" height="170" />
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=FangYikaii&theme=radical&utcOffset=8" alt="Productive time" height="170" />
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=FangYikaii&theme=radical" alt="Repositories per language" height="170" />
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=FangYikaii&theme=radical" alt="Most committed languages" height="170" />
-
-</div>
-
-<div align="center">
-
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=FangYikaii&theme=radical" alt="Profile summary" />
-
-</div>
-
-## Contribution Heatmap
-
-<div align="center">
-
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=FangYikaii&theme=redical&hide_border=true&radius=8&area=true&custom_title=Contribution%20Heatmap&bg_color=0D1117&color=F0F6FC&line=FF2D95&point=00D8FF&area_color=7C3AED&title_color=FACC15" alt="Contribution activity graph" />
-
-</div>
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="./assets/neon-contribution-wall.svg" alt="Neon 3D contribution wall" />
+    </td>
+    <td width="50%" valign="top">
+      <img src="./profile-3d-contrib/profile-night-rainbow.svg" alt="Live 3D contribution graph generated by GitHub Actions" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <img src="https://github-readme-activity-graph.vercel.app/graph?username=FangYikaii&theme=redical&hide_border=true&radius=8&area=true&custom_title=Contribution%20Heatmap&bg_color=0D1117&color=F0F6FC&line=FF2D95&point=00D8FF&area_color=7C3AED&title_color=FACC15" alt="Contribution activity graph" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./dist/github-snake-dark.svg" />
+        <img src="./dist/github-snake.svg" alt="Contribution snake animation" />
+      </picture>
+    </td>
+  </tr>
+</table>
 
 ## What I Build
 
-- Full-stack research and engineering tools that connect AI4S ideas with usable software products.
-- Automation systems for scientific and industrial workflows, from data pipelines to decision support.
-- Industrial software that emphasizes reliability, traceability, reproducibility, and maintainability.
-- ML-assisted optimization for chemistry, materials, semiconductor processes, and closed-loop experiments.
-- Agentic workflows that connect domain knowledge, modeling, evaluation, and human-in-the-loop operation.
-
-## Technical Focus
-
-<p>
-  <img src="https://img.shields.io/badge/Python-111827?style=flat-square&logo=python" alt="Python" />
-  <img src="https://img.shields.io/badge/TypeScript-111827?style=flat-square&logo=typescript" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/PyTorch-111827?style=flat-square&logo=pytorch" alt="PyTorch" />
-  <img src="https://img.shields.io/badge/Pandas-111827?style=flat-square&logo=pandas" alt="Pandas" />
-  <img src="https://img.shields.io/badge/GitHub%20Actions-111827?style=flat-square&logo=githubactions" alt="GitHub Actions" />
-  <img src="https://img.shields.io/badge/Markdown-111827?style=flat-square&logo=markdown" alt="Markdown" />
-</p>
-
-## Quick Links
-
-- SynlysisAI: core member identity shown above. A public organization link can be added once confirmed.
-- GitHub: <https://github.com/FangYikaii>
-- Merged PRs: <https://github.com/search?q=author%3AFangYikaii+is%3Apr+is%3Amerged&type=pullrequests>
-- Recent commits: <https://github.com/search?q=author%3AFangYikaii&type=commits>
-
----
+| AI4S Systems | Industrial Software | Automation |
+| --- | --- | --- |
+| Research tools that connect scientific ideas with usable software products. | Reliable, traceable, reproducible tooling for engineering teams. | Data pipelines, process workflows, decision support, and human-in-the-loop systems. |
+| Chemistry, materials, semiconductor process modeling, and closed-loop experiments. | Full-stack dashboards, APIs, internal platforms, and workflow automation. | Agentic workflows that connect domain knowledge, modeling, evaluation, and operation. |
 
 <div align="center">
 
 <sub>Turning scientific and industrial ideas into systems that run, reproduce, and scale with engineering teams.</sub>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&height=120&section=footer&color=0:FACC15,35:FF2D95,70:7C3AED,100:00D8FF" alt="profile footer wave" />
+<img src="https://capsule-render.vercel.app/api?type=waving&height=105&section=footer&color=0:FACC15,35:FF2D95,70:7C3AED,100:00D8FF" alt="profile footer wave" />
 
 </div>
