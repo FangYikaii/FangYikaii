@@ -17,10 +17,6 @@ Core member of **SynlysisAI**. I build reproducible AI4S systems and full-stack 
 </div>
 
 <p align="center">
-  <img width="92%" src="./assets/github-signal.svg" alt="Current GitHub signal" />
-</p>
-
-<p align="center">
   <img width="100%" height="420" src="./profile-3d-contrib/profile-green.svg" alt="3D contribution heatmap" />
 </p>
 
