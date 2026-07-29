@@ -1,11 +1,11 @@
-<div align="center">
+﻿<div align="center">
 
 # FangYikaii
 
-**AI4S / FDE full-stack engineer**  
-Foundation Design for Engineering · Scientific Agents · Research Software · Industrial AI
+**AI4S / FDE（前沿部署工程师）full-stack engineer**  
+前沿部署工程师 · Scientific Agents · Research Software · Industrial AI
 
-Core member of **SynlysisAI**. I build reproducible AI4S and FDE systems for scientific discovery, engineering design, process optimization, and intelligent experimental workflows. My background in mechatronics, systems engineering, automation, and industrial software forms the engineering substrate behind this work.
+Core member of **SynlysisAI**. I build reproducible AI4S and FDE（前沿部署工程师） systems for scientific discovery, engineering design, process optimization, and intelligent experimental workflows. My background in mechatronics, systems engineering, automation, and industrial software forms the engineering substrate behind this work.
 
 <p>
   <a href="https://github.com/FangYikaii"><img src="https://img.shields.io/badge/GitHub-FangYikaii-24292f?style=flat-square&logo=github&logoColor=white" alt="GitHub FangYikaii" /></a>
@@ -18,19 +18,21 @@ Core member of **SynlysisAI**. I build reproducible AI4S and FDE systems for sci
 
 <table>
   <tr>
-    <td width="42%" valign="top">
+    <td width="100%" valign="top">
       <h3>Research Engineering Focus</h3>
       <p>
-        I work on AI4S and Foundation Design for Engineering: scientific agents,
+        I work on AI4S and FDE（前沿部署工程师）: scientific agents,
         experiment-space design, optimization loops, domain model evaluation,
         and full-stack tools that make research workflows executable.
       </p>
       <p>
-        <b>Core:</b> AI4S, FDE, agents, optimization, scientific software.<br/>
+        <b>Core:</b> AI4S, FDE（前沿部署工程师）, agents, optimization, scientific software.<br/>
         <b>Foundation:</b> mechatronics, systems engineering, automation, industrial software.
       </p>
     </td>
-    <td width="58%" valign="top">
+  </tr>
+  <tr>
+    <td width="100%" valign="top">
       <h3>Current Signal</h3>
       <table>
         <tr>
@@ -43,7 +45,7 @@ Core member of **SynlysisAI**. I build reproducible AI4S and FDE systems for sci
 </table>
 
 <p align="center">
-  <img src="./profile-3d-contrib/profile-night-view.svg" alt="3D contribution heatmap" />
+  <img width="100%" height="420" src="./profile-3d-contrib/profile-green.svg" alt="3D contribution heatmap" />
 </p>
 
 <p align="center">
@@ -53,7 +55,7 @@ Core member of **SynlysisAI**. I build reproducible AI4S and FDE systems for sci
 <table>
   <tr>
     <td width="33%" valign="top"><b>AI4S Systems</b><br/>Scientific agents, model evaluation, experiment workflows, and reproducible research tooling.</td>
-    <td width="33%" valign="top"><b>FDE</b><br/>Engineering design loops that connect domain constraints, optimization objectives, simulation, and decision support.</td>
+    <td width="33%" valign="top"><b>FDE（前沿部署工程师）</b><br/>Engineering design loops that connect domain constraints, optimization objectives, simulation, and decision support.</td>
     <td width="33%" valign="top"><b>Engineering Substrate</b><br/>Mechatronics, automation, systems integration, industrial software, and full-stack implementation.</td>
   </tr>
 </table>
