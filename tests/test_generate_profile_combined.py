@@ -17,6 +17,7 @@ from scripts.generate_profile_combined import (
     RepoTotals,
     fetch_radar_metrics,
     fetch_search_metrics,
+    group_repo_qualifiers,
     rewrite_profile_svgs,
 )
 
@@ -152,22 +153,20 @@ class GenerateProfileCombinedTest(unittest.TestCase):
 
     def test_repo_search_fallback_counts_all_org_prs(self) -> None:
         """组织搜索为 0 时，仓库级搜索会汇总全部组织 PR。"""
+        seen_queries: list[str] = []
         org_repos = [
             RepositoryInfo("ExampleOrg/repo-a", stars=0, forks=0, is_fork=False),
             RepositoryInfo("ExampleOrg/repo-b", stars=0, forks=0, is_fork=False),
         ]
 
         def fake_search(_token: str, query: str) -> int:
+            seen_queries.append(query)
             if (
                 "repo:ExampleOrg/repo-a" in query
+                and "repo:ExampleOrg/repo-b" in query
                 and "is:pr author:FangYikaii" in query
             ):
-                return 4
-            if (
-                "repo:ExampleOrg/repo-b" in query
-                and "is:pr author:FangYikaii" in query
-            ):
-                return 5
+                return 9
             return 0
 
         def fake_commits(
@@ -193,6 +192,11 @@ class GenerateProfileCombinedTest(unittest.TestCase):
 
         self.assertEqual(org.pull_requests, 9)
         self.assertEqual(total.pull_requests, 9)
+        pr_queries = [
+            query for query in seen_queries
+            if "repo:ExampleOrg/" in query and "is:pr author:FangYikaii" in query
+        ]
+        self.assertEqual(len(pr_queries), 1)
 
     def test_repo_search_fallback_skips_duplicate_and_fork_repos(self) -> None:
         """仓库级搜索会跳过重复仓库和 fork 仓库。"""
@@ -246,6 +250,28 @@ class GenerateProfileCombinedTest(unittest.TestCase):
         self.assertEqual(len(repo_a_queries), 1)
         self.assertFalse(
             any("repo:ExampleOrg/forked" in query for query in seen_queries)
+        )
+
+    def test_repo_qualifier_groups_respect_query_length(self) -> None:
+        """仓库 qualifier 会按 Search 查询长度分组。"""
+        repos = [
+            RepositoryInfo(f"ExampleOrg/repo-{index}", stars=0, forks=0, is_fork=False)
+            for index in range(1, 6)
+        ]
+
+        groups = group_repo_qualifiers(
+            repos,
+            max_length=90,
+            suffix="is:pr author:FangYikaii created:2025-08-03..2026-08-03",
+        )
+
+        self.assertGreater(len(groups), 1)
+        self.assertTrue(
+            all(
+                len(f"{group} is:pr author:FangYikaii created:2025-08-03..2026-08-03")
+                <= 90
+                for group in groups
+            )
         )
 
     def test_rest_commit_counts_enter_org_and_total_radar_metrics(self) -> None:

@@ -22,6 +22,7 @@ ISSUE_SEARCH_URL = f"{API_ROOT}/search/issues"
 DEFAULT_ORG = "SynlysAI"
 DEFAULT_PROFILE_DIR = "profile-3d-contrib"
 DEFAULT_USERNAME = "FangYikaii"
+SEARCH_QUERY_MAX_LENGTH = 240
 PERSONAL_TOP = "#2f78b7"
 PERSONAL_LEFT = "#27689f"
 PERSONAL_RIGHT = "#205782"
@@ -608,35 +609,68 @@ def fetch_repository_search_metrics(
     search = search_counter or search_count
     created_range = f"created:{from_day.isoformat()}..{to_day.isoformat()}"
     updated_range = f"updated:{from_day.isoformat()}..{to_day.isoformat()}"
-    unique_repos = unique_repositories(repos)
+    repo_qualifier_groups = group_repo_qualifiers(
+        unique_repositories(repos),
+        max_length=SEARCH_QUERY_MAX_LENGTH,
+        suffix=f"is:pr reviewed-by:{username} {updated_range}",
+    )
     return MetricSet(
         commits=0,
         issues=sum(
             search(
                 token,
-                f"repo:{repo.name_with_owner} "
-                f"is:issue author:{username} {created_range}",
+                f"{repo_qualifiers} is:issue author:{username} {created_range}",
             )
-            for repo in unique_repos
+            for repo_qualifiers in repo_qualifier_groups
         ),
         pull_requests=sum(
             search(
                 token,
-                f"repo:{repo.name_with_owner} "
-                f"is:pr author:{username} {created_range}",
+                f"{repo_qualifiers} is:pr author:{username} {created_range}",
             )
-            for repo in unique_repos
+            for repo_qualifiers in repo_qualifier_groups
         ),
         reviews=sum(
             search(
                 token,
-                f"repo:{repo.name_with_owner} "
-                f"is:pr reviewed-by:{username} {updated_range}",
+                f"{repo_qualifiers} is:pr reviewed-by:{username} {updated_range}",
             )
-            for repo in unique_repos
+            for repo_qualifiers in repo_qualifier_groups
         ),
         repositories=0,
     )
+
+
+def group_repo_qualifiers(
+    repos: list[RepositoryInfo],
+    *,
+    max_length: int,
+    suffix: str,
+) -> tuple[str, ...]:
+    """把仓库 qualifier 分组成不超过 Search 查询长度的片段。
+
+    Args:
+        repos: 需要查询的仓库列表。
+        max_length: 单条 Search 查询的最大长度。
+        suffix: 每条查询附加的固定搜索条件。
+
+    Returns:
+        仓库 qualifier 分组。
+    """
+    groups: list[str] = []
+    current: list[str] = []
+    suffix_length = len(suffix) + 1
+    for repo in repos:
+        qualifier = f"repo:{repo.name_with_owner}"
+        candidate = " ".join([*current, qualifier])
+        if current and len(candidate) + suffix_length > max_length:
+            groups.append(" ".join(current))
+            current = [qualifier]
+        else:
+            current.append(qualifier)
+    if current:
+        groups.append(" ".join(current))
+    return tuple(groups)
 
 
 def search_count(token: str, query: str) -> int:
