@@ -32,8 +32,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PROFILE_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           ORG: SynlysAI
           GITHUB_USERNAME: FangYikaii
-          SOURCE_SVG: profile-3d-contrib/profile-green.svg
-          OUTPUT: profile-3d-contrib/profile-green-combined.svg
+          PROFILE_DIR: profile-3d-contrib
         run: python scripts/generate_profile_combined.py
 
       - name: Commit generated visual assets
