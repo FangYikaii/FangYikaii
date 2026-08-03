@@ -1,14 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="160" viewBox="0 0 1280 160" role="img" aria-labelledby="title desc">
-  <title id="title">SynlysAI PR Activity</title>
-  <desc id="desc">PROFILE_GITHUB_TOKEN is required to read organization activity.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="210" viewBox="0 0 1280 210" role="img" aria-labelledby="title desc">
+  <title id="title">SynlysAI PR activity for FangYikaii</title>
+  <desc id="desc">Organization pull request summary generated from GitHub Search API.</desc>
   <style>
     .bg { fill: #f7faf8; }
     .panel { fill: #ffffff; stroke: #cfd8d1; stroke-width: 1; }
     .title { fill: #132018; font: 700 24px Ubuntu, Helvetica, Arial, sans-serif; }
     .subtle { fill: #5f6f64; font: 14px Ubuntu, Helvetica, Arial, sans-serif; }
+    .label { fill: #334238; font: 700 15px Ubuntu, Helvetica, Arial, sans-serif; }
+    .value { fill: #0f3b1d; font: 800 36px Ubuntu, Helvetica, Arial, sans-serif; }
+    .foot { fill: #6b746d; font: 12px Ubuntu, Helvetica, Arial, sans-serif; }
+    .accent { fill: #6aa84f; }
   </style>
-  <rect class="bg" width="1280" height="160"/>
-  <rect class="panel" x="24" y="20" width="1232" height="116" rx="8"/>
-  <text class="title" x="52" y="64">SynlysAI PR Activity</text>
-  <text class="subtle" x="52" y="92">PROFILE_GITHUB_TOKEN is required to read organization activity.</text>
+  <rect class="bg" width="1280" height="210" rx="0"/>
+  <rect class="panel" x="24" y="20" width="1232" height="166" rx="8"/>
+  <rect class="accent" x="24" y="20" width="8" height="166" rx="4"/>
+  <text class="title" x="52" y="60">SynlysAI Pull Request Activity</text>
+  <text class="subtle" x="52" y="84">author:FangYikaii · org:SynlysAI · private repository names are not exposed</text>
+  <g transform="translate(48 104)">
+  <rect x="0" y="0" width="250" height="50" rx="6" fill="#f1f6f2" stroke="#d7e1d9"/>
+  <text class="label" x="16" y="20">Opened PRs</text>
+  <text class="value" x="16" y="48">25</text>
+  <text class="subtle" x="116" y="46">2025-08-03 / 2026-08-03</text>
+</g>
+<g transform="translate(342 104)">
+  <rect x="0" y="0" width="250" height="50" rx="6" fill="#f1f6f2" stroke="#d7e1d9"/>
+  <text class="label" x="16" y="20">Merged PRs</text>
+  <text class="value" x="16" y="48">25</text>
+  <text class="subtle" x="116" y="46">2025-08-03 / 2026-08-03</text>
+</g>
+<g transform="translate(636 104)">
+  <rect x="0" y="0" width="250" height="50" rx="6" fill="#f1f6f2" stroke="#d7e1d9"/>
+  <text class="label" x="16" y="20">Open PRs</text>
+  <text class="value" x="16" y="48">0</text>
+  <text class="subtle" x="116" y="46">currently open</text>
+</g>
+<g transform="translate(930 104)">
+  <rect x="0" y="0" width="250" height="50" rx="6" fill="#f1f6f2" stroke="#d7e1d9"/>
+  <text class="label" x="16" y="20">Updated PRs</text>
+  <text class="value" x="16" y="48">22</text>
+  <text class="subtle" x="116" y="46">last 30 days</text>
+</g>
+  <text class="foot" x="52" y="166">Generated 2026-08-03 01:41 UTC. Requires PROFILE_GITHUB_TOKEN with access to SynlysAI repositories.</text>
 </svg>
