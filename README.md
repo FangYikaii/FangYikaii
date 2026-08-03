@@ -5,11 +5,11 @@
 **AI4S researcher / full-stack FDE engineer**  
 Scientific Agents · Research Systems · Optimization · Industrial AI
 
-Core member of **SynlysisAI**. I build reproducible AI4S systems and full-stack FDE workflows that connect models, experiments, and engineering constraints for scientific discovery and design. My background in mechatronics, systems engineering, automation, and industrial software shapes how I build and evaluate them.
+Core member of **SynlysAI**. I build reproducible AI4S systems and full-stack FDE workflows that connect models, experiments, and engineering constraints for scientific discovery and design. My background in mechatronics, systems engineering, automation, and industrial software shapes how I build and evaluate them.
 
 <p>
   <a href="https://github.com/FangYikaii"><img src="https://img.shields.io/badge/GitHub-FangYikaii-24292f?style=flat-square&logo=github&logoColor=white" alt="GitHub FangYikaii" /></a>
-  <img src="https://img.shields.io/badge/SynlysisAI-Core%20Member-5f6f64?style=flat-square&logo=github&logoColor=white" alt="SynlysisAI Core Member" />
+  <a href="https://github.com/SynlysAI"><img src="https://img.shields.io/badge/SynlysAI-Core%20Member-5f6f64?style=flat-square&logo=github&logoColor=white" alt="SynlysAI Core Member" /></a>
   <a href="https://github.com/search?q=author%3AFangYikaii+is%3Apr+is%3Amerged&type=pullrequests"><img src="https://img.shields.io/badge/Merged%20PRs-Live%20Search-7c6f64?style=flat-square&logo=git&logoColor=white" alt="Merged PRs" /></a>
   <a href="https://github.com/search?q=author%3AFangYikaii&type=commits"><img src="https://img.shields.io/badge/Commits-Live%20Search-4f6f7a?style=flat-square&logo=github&logoColor=white" alt="Recent commits" /></a>
 </p>

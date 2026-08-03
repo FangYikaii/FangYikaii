@@ -22,8 +22,10 @@ jobs:
       - name: Generate 3D contribution heatmap
         uses: yoshi389111/github-profile-3d-contrib@latest
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Set PROFILE_GITHUB_TOKEN to a PAT that can read SynlysAI repositories.
+          GITHUB_TOKEN: ${{ secrets.PROFILE_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           USERNAME: FangYikaii
+          MAX_REPOS: 300
 
       - name: Commit generated visual assets
         run: |
