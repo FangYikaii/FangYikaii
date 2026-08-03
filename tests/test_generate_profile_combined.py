@@ -352,6 +352,8 @@ class GenerateProfileCombinedTest(unittest.TestCase):
         svg = build_radar_group("980, 284.5", stats)
 
         self.assertIn("Commit<title>15</title></text>", svg)
+        self.assertIn('x="0" y="-200.52"', svg)
+        self.assertIn('x="0" y="-178.52"', svg)
         self.assertIn('class="fill-strong">15</text>', svg)
         self.assertIn("PullReq<title>7</title></text>", svg)
         self.assertIn('class="fill-strong">7</text>', svg)

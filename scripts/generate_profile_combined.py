@@ -1212,7 +1212,7 @@ def build_radar_group(transform: str, stats: ContributionStats) -> str:
         )
     for axis, (label, value) in enumerate(zip(RADAR_LABELS, total_values, strict=True)):
         label_x = radar_x(radius, 6.25, axis)
-        label_y = radar_y(radius, 5.85, axis)
+        label_y = fmt(float(radar_y(radius, 5.85, axis)) - (18 if axis == 0 else 0))
         value_y = fmt(float(label_y) + 22)
         parts.append(
             '<g class="axis">'
