@@ -1211,14 +1211,20 @@ def build_radar_group(transform: str, stats: ContributionStats) -> str:
             f'x="3.12" y="{fmt(-radius * index / levels)}" class="fill-weak">{label}</text>'
         )
     for axis, (label, value) in enumerate(zip(RADAR_LABELS, total_values, strict=True)):
+        label_x = radar_x(radius, 6.25, axis)
+        label_y = radar_y(radius, 5.85, axis)
+        value_y = fmt(float(label_y) + 22)
         parts.append(
             '<g class="axis">'
             f'<line x1="{radar_x(radius, 1, axis)}" y1="{radar_y(radius, 1, axis)}" '
             f'x2="{radar_x(radius, levels, axis)}" y2="{radar_y(radius, levels, axis)}" '
             'class="stroke-weak" style="stroke-dasharray: 4 4; stroke-width: 1px;"></line>'
             f'<text style="font-size: 20.8px;" text-anchor="middle" dominant-baseline="middle" '
-            f'x="{radar_x(radius, 6.25, axis)}" y="{radar_y(radius, 5.85, axis)}" '
+            f'x="{label_x}" y="{label_y}" '
             f'class="fill-fg">{label}<title>{value}</title></text>'
+            f'<text style="font-size: 16px; font-weight: bold;" text-anchor="middle" '
+            f'dominant-baseline="middle" x="{label_x}" y="{value_y}" '
+            f'class="fill-strong">{value}</text>'
             "</g>"
         )
     parts.append(
@@ -1287,7 +1293,31 @@ def rewrite_bottom_totals(svg: str, stats: ContributionStats) -> str:
     )
     svg = replace_counter_after_x(svg, "650", stats.repo_totals.stars)
     svg = replace_counter_after_x(svg, "772", stats.repo_totals.forks)
+    svg = rewrite_date_range_label(svg, stats)
     return svg
+
+
+def rewrite_date_range_label(svg: str, stats: ContributionStats) -> str:
+    """把统计窗口日期重写为带标签的可见文本。
+
+    Args:
+        svg: 原始 SVG。
+        stats: 融合后的贡献统计。
+
+    Returns:
+        日期标签重写后的 SVG。
+    """
+    if not stats.days:
+        return svg
+    from_day = stats.days[0].day.isoformat()
+    to_day = stats.days[-1].day.isoformat()
+    window = f"Window: {from_day} / {to_day}"
+    return re.sub(
+        r"(\d{4}-\d{2}-\d{2} / \d{4}-\d{2}-\d{2})",
+        window,
+        svg,
+        count=1,
+    )
 
 
 def replace_counter_after_x(svg: str, x_value: str, value: int) -> str:

@@ -12,6 +12,7 @@ from scripts.generate_profile_combined import (
     MetricSet,
     RepositoryInfo,
     build_day_group,
+    build_radar_group,
     build_stats,
     DayGroup,
     RepoTotals,
@@ -336,6 +337,25 @@ class GenerateProfileCombinedTest(unittest.TestCase):
         self.assertIn("#2da44e", svg)
         self.assertIn("personal 2, SynlysAI 3", svg)
 
+    def test_radar_group_outputs_visible_metric_values(self) -> None:
+        """雷达图指标数值会作为可见文本输出。"""
+        stats = ContributionStats(
+            days=(),
+            personal_metrics=MetricSet(4, 1, 2, 0, 1),
+            org_metrics=MetricSet(11, 0, 5, 1, 1),
+            total_metrics=MetricSet(15, 1, 7, 1, 2),
+            total_contributions=0,
+            repo_totals=RepoTotals(stars=0, forks=0),
+            languages=(),
+        )
+
+        svg = build_radar_group("980, 284.5", stats)
+
+        self.assertIn("Commit<title>15</title></text>", svg)
+        self.assertIn('class="fill-strong">15</text>', svg)
+        self.assertIn("PullReq<title>7</title></text>", svg)
+        self.assertIn('class="fill-strong">7</text>', svg)
+
     def test_rewrite_all_theme_svgs_outputs_combined_markers(self) -> None:
         """所有主题 SVG 都会被后处理成融合图。"""
         source_svg = Path("profile-3d-contrib/profile-green.svg")
@@ -369,6 +389,7 @@ class GenerateProfileCombinedTest(unittest.TestCase):
                 self.assertIn("Total", svg)
                 self.assertIn("#2f78b7", svg)
                 self.assertIn("#2da44e", svg)
+                self.assertIn("Window: 2026-08-01 / 2026-08-01", svg)
                 self.assertNotIn("Contribution Origin", svg)
 
 
