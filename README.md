@@ -20,6 +20,10 @@ Core member of **SynlysAI**. I build reproducible AI4S systems and full-stack FD
   <img width="100%" height="420" src="./profile-3d-contrib/profile-green.svg" alt="3D contribution heatmap" />
 </p>
 
+<p align="center">
+  <img width="100%" src="./profile-3d-contrib/synlysai-pr-summary.svg" alt="SynlysAI pull request activity summary" />
+</p>
+
 <table>
   <tr>
     <td width="33%" valign="top"><b>AI4S Systems</b><br/>Scientific agents, model evaluation, experiment workflows, and reproducible research tooling.</td>
