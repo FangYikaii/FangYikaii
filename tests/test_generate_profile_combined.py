@@ -12,6 +12,7 @@ from scripts.generate_profile_combined import (
     MetricSet,
     RepositoryInfo,
     build_day_group,
+    build_heatmap_legend,
     build_radar_group,
     build_stats,
     DayGroup,
@@ -357,6 +358,19 @@ class GenerateProfileCombinedTest(unittest.TestCase):
         self.assertIn('class="fill-strong">15</text>', svg)
         self.assertIn("PullReq<title>7</title></text>", svg)
         self.assertIn('class="fill-strong">7</text>', svg)
+        self.assertIn('transform="translate(-185 -245)"', svg)
+        self.assertNotIn('transform="translate(-120 -204)"', svg)
+
+    def test_heatmap_legend_outputs_matching_swatches(self) -> None:
+        """热力图图例使用和热力图柱体一致的个人/组织颜色。"""
+        svg = build_heatmap_legend()
+
+        self.assertIn('id="synlysai-heatmap-legend"', svg)
+        self.assertIn('transform="translate(24 112)"', svg)
+        self.assertIn('fill="#2f78b7"', svg)
+        self.assertIn('fill="#2da44e"', svg)
+        self.assertIn("Personal", svg)
+        self.assertIn("SynlysAI", svg)
 
     def test_rewrite_all_theme_svgs_outputs_combined_markers(self) -> None:
         """所有主题 SVG 都会被后处理成融合图。"""
@@ -389,6 +403,7 @@ class GenerateProfileCombinedTest(unittest.TestCase):
                 self.assertIn("Personal", svg)
                 self.assertIn("SynlysAI", svg)
                 self.assertIn("Total", svg)
+                self.assertEqual(svg.count('id="synlysai-heatmap-legend"'), 1)
                 self.assertIn("#2f78b7", svg)
                 self.assertIn("#2da44e", svg)
                 self.assertIn("Window: 2026-08-01 / 2026-08-01", svg)

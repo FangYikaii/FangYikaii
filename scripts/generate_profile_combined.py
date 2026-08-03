@@ -947,6 +947,33 @@ def remove_legacy_overlay(svg: str) -> str:
     )
 
 
+def find_radar_group_start(svg: str) -> int:
+    """定位雷达图外层 g 起点，兼容原始和已后处理 SVG。
+
+    Args:
+        svg: 待处理的完整 SVG。
+
+    Returns:
+        雷达图外层 g 的起始下标；未找到时返回 -1。
+    """
+    polygon_index = svg.find('<polygon class="radar"')
+    if polygon_index >= 0:
+        return svg.rfind('<g transform="translate(', 0, polygon_index)
+
+    language_section = svg.find('<g transform="translate(40, 520)')
+    if language_section < 0:
+        return -1
+    radar_groups = list(
+        re.finditer(
+            r'<g transform="translate\([^"]*,[^"]*\)">',
+            svg[:language_section],
+        )
+    )
+    if not radar_groups:
+        return -1
+    return radar_groups[-1].start()
+
+
 def rewrite_heatmap(svg: str, days: tuple[DayContribution, ...]) -> str:
     """把 3D 热力图格子改写为个人/组织双色分层柱。
 
@@ -957,17 +984,14 @@ def rewrite_heatmap(svg: str, days: tuple[DayContribution, ...]) -> str:
     Returns:
         改写后的 SVG。
     """
-    polygon_index = svg.find('<polygon class="radar"')
-    if polygon_index < 0:
-        return svg
-    radar_start = svg.rfind('<g transform="translate(', 0, polygon_index)
+    radar_start = find_radar_group_start(svg)
     marker = 'class="fill-bg"></rect><g>'
     heatmap_marker = svg.find(marker)
     if heatmap_marker < 0 or radar_start < 0:
         return svg
     heatmap_inner_start = heatmap_marker + len(marker)
     heatmap_inner_end = radar_start - len("</g>") if svg[radar_start - 4 : radar_start] == "</g>" else radar_start
-    original_inner = svg[heatmap_inner_start:heatmap_inner_end]
+    original_inner = remove_heatmap_legend(svg[heatmap_inner_start:heatmap_inner_end])
     groups = parse_day_groups(original_inner)
     aligned_days = align_days_to_groups(days, len(groups))
     rewritten_groups = [
@@ -977,7 +1001,37 @@ def rewrite_heatmap(svg: str, days: tuple[DayContribution, ...]) -> str:
     return (
         svg[:heatmap_inner_start]
         + "".join(rewritten_groups)
+        + build_heatmap_legend()
         + svg[heatmap_inner_end:]
+    )
+
+
+def remove_heatmap_legend(svg_inner: str) -> str:
+    """删除已生成的热力图颜色图例。
+
+    Args:
+        svg_inner: 热力图外层 g 内部 SVG。
+
+    Returns:
+        删除热力图图例后的 SVG。
+    """
+    return re.sub(
+        r'\s*<g id="synlysai-heatmap-legend".*?</g>\s*',
+        "",
+        svg_inner,
+        flags=re.DOTALL,
+    )
+
+
+def build_heatmap_legend() -> str:
+    """生成热力图个人与组织贡献颜色图例。"""
+    return (
+        '<g id="synlysai-heatmap-legend" transform="translate(24 112)">'
+        f'<rect x="0" y="0" width="12" height="12" fill="{PERSONAL_TOP}" opacity="0.9"></rect>'
+        '<text x="18" y="11" font-size="13" class="fill-fg">Personal</text>'
+        f'<rect x="96" y="0" width="12" height="12" fill="{ORG_TOP}" opacity="0.95"></rect>'
+        '<text x="114" y="11" font-size="13" class="fill-fg">SynlysAI</text>'
+        '</g>'
     )
 
 
@@ -1172,11 +1226,8 @@ def contribution_height(count: int) -> float:
 
 def rewrite_radar(svg: str, stats: ContributionStats) -> str:
     """重写雷达图为个人、SynlysAI、合计三层。"""
-    polygon_index = svg.find('<polygon class="radar"')
-    if polygon_index < 0:
-        return svg
-    group_start = svg.rfind('<g transform="translate(', 0, polygon_index)
-    next_section = svg.find('<g transform="translate(40, 520)', polygon_index)
+    group_start = find_radar_group_start(svg)
+    next_section = svg.find('<g transform="translate(40, 520)', group_start)
     if group_start < 0 or next_section < 0:
         return svg
     group_end = next_section
@@ -1247,7 +1298,7 @@ def build_radar_group(transform: str, stats: ContributionStats) -> str:
 def radar_legend() -> str:
     """生成雷达图极简图例。"""
     return (
-        '<g transform="translate(-120 -204)">'
+        '<g transform="translate(-185 -245)">'
         f'<rect x="0" y="0" width="10" height="10" fill="{PERSONAL_TOP}" opacity="0.8"></rect>'
         '<text x="16" y="10" font-size="12" class="fill-fg">Personal</text>'
         f'<rect x="86" y="0" width="10" height="10" fill="{ORG_TOP}" opacity="0.9"></rect>'
