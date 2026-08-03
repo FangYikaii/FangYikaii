@@ -18,6 +18,7 @@ from scripts.generate_profile_combined import (
     DayGroup,
     RepoTotals,
     fetch_radar_metrics,
+    fetch_repository_commit_days,
     fetch_search_metrics,
     group_repo_qualifiers,
     rewrite_profile_svgs,
@@ -119,6 +120,96 @@ class GenerateProfileCombinedTest(unittest.TestCase):
             [(item.name, item.count) for item in stats.languages],
             [("Python", 6), ("Go", 3), ("TypeScript", 2)],
         )
+
+    def test_org_repo_commit_days_override_graphql_heatmap_days(self) -> None:
+        """组织仓库提交日期会补齐热力图组织贡献。"""
+        total = self._collection(
+            [("2026-08-01", 2), ("2026-08-02", 1)],
+            commits=10,
+            pull_requests=5,
+        )
+        org = self._collection(
+            [("2026-08-01", 1)],
+            commits=1,
+            pull_requests=0,
+        )
+
+        stats = build_stats(
+            total,
+            org,
+            RepoTotals(stars=2, forks=1),
+            org_commit_days={
+                date(2026, 8, 1): 5,
+                date(2026, 8, 2): 3,
+                date(2026, 8, 3): 2,
+            },
+        )
+
+        self.assertEqual(
+            [(item.day, item.personal, item.org) for item in stats.days],
+            [
+                (date(2026, 8, 1), 1, 5),
+                (date(2026, 8, 2), 1, 3),
+                (date(2026, 8, 3), 0, 2),
+            ],
+        )
+        self.assertEqual(stats.total_contributions, 12)
+
+    def test_repository_commit_days_skip_duplicate_and_fork_repos(self) -> None:
+        """组织热力图仓库提交 fallback 会跳过重复仓库和 fork 仓库。"""
+        repos = [
+            RepositoryInfo("ExampleOrg/repo-a", stars=0, forks=0, is_fork=False),
+            RepositoryInfo("ExampleOrg/repo-a", stars=0, forks=0, is_fork=False),
+            RepositoryInfo("ExampleOrg/forked", stars=0, forks=0, is_fork=True),
+        ]
+        seen_urls: list[str] = []
+
+        def fake_json(_token: str, url: str) -> tuple[list[dict], dict[str, str]]:
+            seen_urls.append(url)
+            return (
+                [{"commit": {"author": {"date": "2026-08-01T12:00:00Z"}}}],
+                {},
+            )
+
+        days = fetch_repository_commit_days(
+            "token",
+            "FangYikaii",
+            repos,
+            date(2026, 8, 1),
+            date(2026, 8, 2),
+            json_fetcher=fake_json,
+        )
+
+        self.assertEqual(days, {date(2026, 8, 1): 1})
+        self.assertEqual(len(seen_urls), 1)
+        self.assertIn("/repos/ExampleOrg/repo-a/commits?", seen_urls[0])
+        self.assertFalse(any("ExampleOrg/forked" in url for url in seen_urls))
+
+    def test_repository_commit_days_ignore_failed_repo(self) -> None:
+        """单个组织仓库 commit API 失败时不影响其它仓库汇总。"""
+        repos = [
+            RepositoryInfo("ExampleOrg/bad", stars=0, forks=0, is_fork=False),
+            RepositoryInfo("ExampleOrg/good", stars=0, forks=0, is_fork=False),
+        ]
+
+        def fake_json(_token: str, url: str) -> tuple[list[dict], dict[str, str]]:
+            if "ExampleOrg/bad" in url:
+                raise RuntimeError("blocked")
+            return (
+                [{"commit": {"author": {"date": "2026-08-02T01:00:00Z"}}}],
+                {},
+            )
+
+        days = fetch_repository_commit_days(
+            "token",
+            "FangYikaii",
+            repos,
+            date(2026, 8, 1),
+            date(2026, 8, 3),
+            json_fetcher=fake_json,
+        )
+
+        self.assertEqual(days, {date(2026, 8, 2): 1})
 
     def test_search_metrics_count_authored_prs_for_org(self) -> None:
         """PR 指标使用 author 查询，并能统计 SynlysAI 组织 PR。"""

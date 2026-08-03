@@ -239,6 +239,13 @@ def fetch_contribution_stats(
     user_repos = fetch_repo_page_sequence(token, "user", username)
     org_repos = fetch_repo_page_sequence(token, "organization", org)
     repo_totals = build_repo_totals(user_repos, org_repos)
+    org_commit_days = fetch_repository_commit_days(
+        token,
+        username,
+        org_repos,
+        from_day,
+        to_day,
+    )
     personal_metrics, org_metrics, total_metrics = fetch_radar_metrics(
         token,
         username,
@@ -252,6 +259,7 @@ def fetch_contribution_stats(
         user["total"],
         user["org"],
         repo_totals,
+        org_commit_days=org_commit_days,
         personal_metrics=personal_metrics,
         org_metrics=org_metrics,
         total_metrics=total_metrics,
@@ -730,6 +738,128 @@ def count_repo_commits(
     return 0
 
 
+def fetch_repository_commit_days(
+    token: str,
+    username: str,
+    repos: list[RepositoryInfo],
+    from_day: date,
+    to_day: date,
+    *,
+    json_fetcher: Callable[[str, str], tuple[Any, dict[str, str]]] | None = None,
+) -> dict[date, int]:
+    """按仓库汇总指定作者的每日 commit 数。
+
+    Args:
+        token: GitHub API token。
+        username: GitHub 用户名。
+        repos: 需要纳入统计的仓库列表。
+        from_day: 统计起始日期。
+        to_day: 统计结束日期。
+        json_fetcher: 测试用 REST JSON 获取函数。
+
+    Returns:
+        日期到 commit 数的映射。
+    """
+    result: dict[date, int] = {}
+    for repo in unique_repositories(repos):
+        repo_days = fetch_repo_commit_days(
+            token,
+            repo,
+            username,
+            from_day,
+            to_day,
+            json_fetcher=json_fetcher,
+        )
+        for day, count in repo_days.items():
+            result[day] = result.get(day, 0) + count
+    return result
+
+
+def fetch_repo_commit_days(
+    token: str,
+    repo: RepositoryInfo,
+    username: str,
+    from_day: date,
+    to_day: date,
+    *,
+    json_fetcher: Callable[[str, str], tuple[Any, dict[str, str]]] | None = None,
+) -> dict[date, int]:
+    """读取单个仓库中指定作者的每日 commit 数。
+
+    Args:
+        token: GitHub API token。
+        repo: 仓库信息。
+        username: GitHub 用户名。
+        from_day: 统计起始日期。
+        to_day: 统计结束日期。
+        json_fetcher: 测试用 REST JSON 获取函数。
+
+    Returns:
+        日期到 commit 数的映射；仓库不可访问时返回空映射。
+    """
+    fetcher = json_fetcher or github_json
+    result: dict[date, int] = {}
+    page = 1
+    while True:
+        query = urllib.parse.urlencode(
+            {
+                "author": username,
+                "since": f"{from_day.isoformat()}T00:00:00Z",
+                "until": f"{to_day.isoformat()}T23:59:59Z",
+                "per_page": 100,
+                "page": page,
+            }
+        )
+        url = f"{API_ROOT}/repos/{repo.name_with_owner}/commits?{query}"
+        try:
+            payload, headers = fetcher(token, url)
+        except RuntimeError:
+            return {}
+        if not isinstance(payload, list) or not payload:
+            break
+
+        for item in payload:
+            day = commit_author_day(item)
+            if day is None or day < from_day or day > to_day:
+                continue
+            result[day] = result.get(day, 0) + 1
+
+        last_page = parse_last_page(headers.get("Link", ""))
+        if last_page is not None:
+            if page >= last_page:
+                break
+        elif len(payload) < 100:
+            break
+        page += 1
+    return result
+
+
+def commit_author_day(item: object) -> date | None:
+    """从 REST commit 响应中读取 author 日期。
+
+    Args:
+        item: GitHub REST commit 响应条目。
+
+    Returns:
+        commit author 日期；缺失或格式错误时返回 None。
+    """
+    if not isinstance(item, dict):
+        return None
+    commit = item.get("commit")
+    if not isinstance(commit, dict):
+        return None
+    author = commit.get("author")
+    if not isinstance(author, dict):
+        return None
+    raw_date = author.get("date")
+    if not isinstance(raw_date, str):
+        return None
+    try:
+        return datetime.fromisoformat(raw_date.replace("Z", "+00:00")).date()
+    except ValueError:
+        return None
+
+
 def parse_last_page(link_header: str) -> int | None:
     """从 GitHub Link 响应头读取最后一页页码。"""
     for part in link_header.split(","):
@@ -744,6 +874,7 @@ def build_stats(
     org_collection: dict[str, Any],
     repo_totals: RepoTotals,
     *,
+    org_commit_days: dict[date, int] | None = None,
     personal_metrics: MetricSet | None = None,
     org_metrics: MetricSet | None = None,
     total_metrics: MetricSet | None = None,
@@ -754,6 +885,7 @@ def build_stats(
         total_collection: 用户总 contributionsCollection。
         org_collection: 组织过滤 contributionsCollection。
         repo_totals: 可见仓库整体统计。
+        org_commit_days: 组织仓库 REST commit 日期计数。
         personal_metrics: 外部雷达个人指标。
         org_metrics: 外部雷达组织指标。
         total_metrics: 外部雷达合计指标。
@@ -763,14 +895,16 @@ def build_stats(
     """
     total_days = calendar_by_date(total_collection)
     org_days = calendar_by_date(org_collection)
+    org_commit_days = org_commit_days or {}
     days: list[DayContribution] = []
-    for day in sorted(total_days):
-        total_count = total_days[day]
-        org_count = org_days.get(day, 0)
+    for day in sorted(set(total_days) | set(org_days) | set(org_commit_days)):
+        total_count = total_days.get(day, 0)
+        graphql_org_count = org_days.get(day, 0)
+        org_count = max(graphql_org_count, org_commit_days.get(day, 0))
         days.append(
             DayContribution(
                 day=day,
-                personal=max(total_count - org_count, 0),
+                personal=max(total_count - graphql_org_count, 0),
                 org=max(org_count, 0),
             )
         )
