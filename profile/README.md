@@ -5,11 +5,11 @@
 **AI4S researcher / full-stack FDE engineer**  
 Scientific Agents · Research Systems · Optimization · Industrial AI
 
-Core member of **SynlysAI**. I build reproducible AI4S systems and full-stack FDE workflows that connect models, experiments, and engineering constraints for scientific discovery and design. My background in mechatronics, systems engineering, automation, and industrial software shapes how I build and evaluate them.
+Founder of **SynlysAI**. I build reproducible AI4S systems and full-stack FDE workflows that connect models, experiments, and engineering constraints for scientific discovery and design. My background in mechanical engineering, systems engineering, automation, and industrial software shapes how I build and evaluate them.
 
 <p>
   <a href="https://github.com/FangYikaii"><img src="https://img.shields.io/badge/GitHub-FangYikaii-24292f?style=flat-square&logo=github&logoColor=white" alt="GitHub FangYikaii" /></a>
-  <a href="https://github.com/SynlysAI"><img src="https://img.shields.io/badge/SynlysAI-Core%20Member-5f6f64?style=flat-square&logo=github&logoColor=white" alt="SynlysAI Core Member" /></a>
+  <a href="https://github.com/SynlysAI"><img src="https://img.shields.io/badge/SynlysAI-Founder-5f6f64?style=flat-square&logo=github&logoColor=white" alt="SynlysAI Founder" /></a>
   <a href="https://github.com/search?q=author%3AFangYikaii+is%3Apr+is%3Amerged&type=pullrequests"><img src="https://img.shields.io/badge/Merged%20PRs-Live%20Search-7c6f64?style=flat-square&logo=git&logoColor=white" alt="Merged PRs" /></a>
   <a href="https://github.com/search?q=author%3AFangYikaii&type=commits"><img src="https://img.shields.io/badge/Commits-Live%20Search-4f6f7a?style=flat-square&logo=github&logoColor=white" alt="Recent commits" /></a>
 </p>
@@ -24,6 +24,6 @@ Core member of **SynlysAI**. I build reproducible AI4S systems and full-stack FD
   <tr>
     <td width="33%" valign="top"><b>AI4S Systems</b><br/>Scientific agents, model evaluation, experiment workflows, and reproducible research tooling.</td>
     <td width="33%" valign="top"><b>FDE</b><br/>Closed-loop design that connects domain constraints, optimization objectives, simulation, and decision support.</td>
-    <td width="33%" valign="top"><b>Engineering Substrate</b><br/>Mechatronics, automation, systems integration, industrial software, and full-stack implementation.</td>
+    <td width="33%" valign="top"><b>Engineering Substrate</b><br/>Mechanical engineering, automation, systems integration, industrial software, and full-stack implementation.</td>
   </tr>
 </table>
