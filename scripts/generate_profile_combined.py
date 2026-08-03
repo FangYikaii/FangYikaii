@@ -486,21 +486,35 @@ def fetch_radar_metrics(
     commit = commit_counter or count_repo_commits
     org_unique = unique_repositories(org_repos)
     total_unique = unique_repositories(user_repos + org_repos)
-    total_search = fetch_search_metrics(
+    org_repo_search = fetch_repository_search_metrics(
         token,
         username,
-        org="",
-        from_day=from_day,
-        to_day=to_day,
+        org_unique,
+        from_day,
+        to_day,
         search_counter=search,
     )
-    org_search = fetch_search_metrics(
-        token,
-        username,
-        org=org,
-        from_day=from_day,
-        to_day=to_day,
-        search_counter=search,
+    total_search = max_metrics(
+        fetch_search_metrics(
+            token,
+            username,
+            org="",
+            from_day=from_day,
+            to_day=to_day,
+            search_counter=search,
+        ),
+        org_repo_search,
+    )
+    org_search = max_metrics(
+        fetch_search_metrics(
+            token,
+            username,
+            org=org,
+            from_day=from_day,
+            to_day=to_day,
+            search_counter=search,
+        ),
+        org_repo_search,
     )
     total_metrics = MetricSet(
         commits=sum(
@@ -565,6 +579,61 @@ def fetch_search_metrics(
         reviews=search(
             token,
             f"{org_prefix}is:pr reviewed-by:{username} {updated_range}",
+        ),
+        repositories=0,
+    )
+
+
+def fetch_repository_search_metrics(
+    token: str,
+    username: str,
+    repos: list[RepositoryInfo],
+    from_day: date,
+    to_day: date,
+    search_counter: Callable[[str, str], int] | None = None,
+) -> MetricSet:
+    """按仓库逐个查询 issue、PR、review 指标。
+
+    Args:
+        token: GitHub API token。
+        username: GitHub 用户名。
+        repos: 需要纳入统计的仓库列表。
+        from_day: 统计起始日期。
+        to_day: 统计结束日期。
+        search_counter: 测试用 Search API 计数函数。
+
+    Returns:
+        仓库维度汇总后的 Search 指标集合。
+    """
+    search = search_counter or search_count
+    created_range = f"created:{from_day.isoformat()}..{to_day.isoformat()}"
+    updated_range = f"updated:{from_day.isoformat()}..{to_day.isoformat()}"
+    unique_repos = unique_repositories(repos)
+    return MetricSet(
+        commits=0,
+        issues=sum(
+            search(
+                token,
+                f"repo:{repo.name_with_owner} "
+                f"is:issue author:{username} {created_range}",
+            )
+            for repo in unique_repos
+        ),
+        pull_requests=sum(
+            search(
+                token,
+                f"repo:{repo.name_with_owner} "
+                f"is:pr author:{username} {created_range}",
+            )
+            for repo in unique_repos
+        ),
+        reviews=sum(
+            search(
+                token,
+                f"repo:{repo.name_with_owner} "
+                f"is:pr reviewed-by:{username} {updated_range}",
+            )
+            for repo in unique_repos
         ),
         repositories=0,
     )
@@ -725,6 +794,17 @@ def subtract_metrics(total: MetricSet, subset: MetricSet) -> MetricSet:
         pull_requests=max(total.pull_requests - subset.pull_requests, 0),
         reviews=max(total.reviews - subset.reviews, 0),
         repositories=max(total.repositories - subset.repositories, 0),
+    )
+
+
+def max_metrics(first: MetricSet, second: MetricSet) -> MetricSet:
+    """逐字段选取两组指标中的较大值。"""
+    return MetricSet(
+        commits=max(first.commits, second.commits),
+        issues=max(first.issues, second.issues),
+        pull_requests=max(first.pull_requests, second.pull_requests),
+        reviews=max(first.reviews, second.reviews),
+        repositories=max(first.repositories, second.repositories),
     )
 
 

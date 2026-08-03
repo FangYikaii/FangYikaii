@@ -150,6 +150,104 @@ class GenerateProfileCombinedTest(unittest.TestCase):
         self.assertEqual(org.pull_requests, 9)
         self.assertTrue(any("created:2025-08-03..2026-08-03" in query for query in seen_queries))
 
+    def test_repo_search_fallback_counts_all_org_prs(self) -> None:
+        """组织搜索为 0 时，仓库级搜索会汇总全部组织 PR。"""
+        org_repos = [
+            RepositoryInfo("ExampleOrg/repo-a", stars=0, forks=0, is_fork=False),
+            RepositoryInfo("ExampleOrg/repo-b", stars=0, forks=0, is_fork=False),
+        ]
+
+        def fake_search(_token: str, query: str) -> int:
+            if (
+                "repo:ExampleOrg/repo-a" in query
+                and "is:pr author:FangYikaii" in query
+            ):
+                return 4
+            if (
+                "repo:ExampleOrg/repo-b" in query
+                and "is:pr author:FangYikaii" in query
+            ):
+                return 5
+            return 0
+
+        def fake_commits(
+            _token: str,
+            _repo: RepositoryInfo,
+            _username: str,
+            _from_day: date,
+            _to_day: date,
+        ) -> int:
+            return 0
+
+        _personal, org, total = fetch_radar_metrics(
+            "token",
+            "FangYikaii",
+            "ExampleOrg",
+            date(2025, 8, 3),
+            date(2026, 8, 3),
+            [],
+            org_repos,
+            search_counter=fake_search,
+            commit_counter=fake_commits,
+        )
+
+        self.assertEqual(org.pull_requests, 9)
+        self.assertEqual(total.pull_requests, 9)
+
+    def test_repo_search_fallback_skips_duplicate_and_fork_repos(self) -> None:
+        """仓库级搜索会跳过重复仓库和 fork 仓库。"""
+        seen_queries: list[str] = []
+        org_repos = [
+            RepositoryInfo("ExampleOrg/repo-a", stars=0, forks=0, is_fork=False),
+            RepositoryInfo("ExampleOrg/repo-a", stars=0, forks=0, is_fork=False),
+            RepositoryInfo("ExampleOrg/forked", stars=0, forks=0, is_fork=True),
+        ]
+
+        def fake_search(_token: str, query: str) -> int:
+            seen_queries.append(query)
+            if (
+                "repo:ExampleOrg/repo-a" in query
+                and "is:pr author:FangYikaii" in query
+            ):
+                return 3
+            return 0
+
+        def fake_commits(
+            _token: str,
+            _repo: RepositoryInfo,
+            _username: str,
+            _from_day: date,
+            _to_day: date,
+        ) -> int:
+            return 0
+
+        _personal, org, total = fetch_radar_metrics(
+            "token",
+            "FangYikaii",
+            "ExampleOrg",
+            date(2025, 8, 3),
+            date(2026, 8, 3),
+            [],
+            org_repos,
+            search_counter=fake_search,
+            commit_counter=fake_commits,
+        )
+
+        repo_a_queries = [
+            query
+            for query in seen_queries
+            if (
+                "repo:ExampleOrg/repo-a" in query
+                and "is:pr author:FangYikaii" in query
+            )
+        ]
+        self.assertEqual(org.pull_requests, 3)
+        self.assertEqual(total.pull_requests, 3)
+        self.assertEqual(len(repo_a_queries), 1)
+        self.assertFalse(
+            any("repo:ExampleOrg/forked" in query for query in seen_queries)
+        )
+
     def test_rest_commit_counts_enter_org_and_total_radar_metrics(self) -> None:
         """仓库 REST commit 计数进入组织和合计雷达指标。"""
         user_repos = [
@@ -161,6 +259,8 @@ class GenerateProfileCombinedTest(unittest.TestCase):
         ]
 
         def fake_search(_token: str, query: str) -> int:
+            if "repo:" in query:
+                return 0
             if "org:SynlysAI" in query and "is:pr author:FangYikaii" in query:
                 return 5
             if "is:pr author:FangYikaii" in query:
