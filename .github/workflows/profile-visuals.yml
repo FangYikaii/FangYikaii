@@ -35,6 +35,34 @@ jobs:
           PROFILE_DIR: profile-3d-contrib
         run: python scripts/generate_profile_combined.py
 
+      - name: Validate combined profile visual
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          profile_dir = Path("profile-3d-contrib")
+          forbidden = (
+              "Contribution Origin",
+              "synlysai-origin-overlay",
+              "profile-green-combined.svg",
+          )
+          required = ("Personal", "SynlysAI", "Total")
+          svgs = sorted(profile_dir.glob("*.svg"))
+          if not svgs:
+              raise SystemExit("No profile SVG files found")
+          for svg_path in svgs:
+              text = svg_path.read_text(encoding="utf-8")
+              missing = [item for item in required if item not in text]
+              if missing:
+                  raise SystemExit(f"{svg_path} missing required markers: {missing}")
+              blocked = [item for item in forbidden if item in text]
+              if blocked:
+                  raise SystemExit(f"{svg_path} contains forbidden markers: {blocked}")
+          if (profile_dir / "profile-green-combined.svg").exists():
+              raise SystemExit("profile-green-combined.svg should not exist")
+          print(f"Validated {len(svgs)} combined profile SVG files")
+          PY
+
       - name: Commit generated visual assets
         run: |
           git config user.name "github-actions[bot]"

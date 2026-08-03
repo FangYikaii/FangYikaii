@@ -1,14 +1,23 @@
 """验证 profile SVG 融合统计脚本。"""
 
 from datetime import date
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 
 from scripts.generate_profile_combined import (
+    ContributionStats,
     DayContribution,
-    RepoTotals,
+    LanguageStat,
+    MetricSet,
+    RepositoryInfo,
     build_day_group,
     build_stats,
     DayGroup,
+    RepoTotals,
+    fetch_radar_metrics,
+    fetch_search_metrics,
+    rewrite_profile_svgs,
 )
 
 
@@ -108,6 +117,88 @@ class GenerateProfileCombinedTest(unittest.TestCase):
             [("Python", 6), ("Go", 3), ("TypeScript", 2)],
         )
 
+    def test_search_metrics_count_authored_prs_for_org(self) -> None:
+        """PR 指标使用 author 查询，并能统计 SynlysAI 组织 PR。"""
+        seen_queries: list[str] = []
+
+        def fake_search(_token: str, query: str) -> int:
+            seen_queries.append(query)
+            if "org:SynlysAI" in query and "is:pr author:FangYikaii" in query:
+                return 9
+            if "is:pr author:FangYikaii" in query:
+                return 12
+            return 0
+
+        total = fetch_search_metrics(
+            "token",
+            "FangYikaii",
+            "",
+            date(2025, 8, 3),
+            date(2026, 8, 3),
+            fake_search,
+        )
+        org = fetch_search_metrics(
+            "token",
+            "FangYikaii",
+            "SynlysAI",
+            date(2025, 8, 3),
+            date(2026, 8, 3),
+            fake_search,
+        )
+
+        self.assertEqual(total.pull_requests, 12)
+        self.assertEqual(org.pull_requests, 9)
+        self.assertTrue(any("created:2025-08-03..2026-08-03" in query for query in seen_queries))
+
+    def test_rest_commit_counts_enter_org_and_total_radar_metrics(self) -> None:
+        """仓库 REST commit 计数进入组织和合计雷达指标。"""
+        user_repos = [
+            RepositoryInfo("FangYikaii/personal", stars=1, forks=0, is_fork=False),
+        ]
+        org_repos = [
+            RepositoryInfo("SynlysAI/private-a", stars=2, forks=1, is_fork=False),
+            RepositoryInfo("SynlysAI/private-fork", stars=3, forks=1, is_fork=True),
+        ]
+
+        def fake_search(_token: str, query: str) -> int:
+            if "org:SynlysAI" in query and "is:pr author:FangYikaii" in query:
+                return 5
+            if "is:pr author:FangYikaii" in query:
+                return 7
+            return 0
+
+        def fake_commits(
+            _token: str,
+            repo: RepositoryInfo,
+            _username: str,
+            _from_day: date,
+            _to_day: date,
+        ) -> int:
+            return {
+                "FangYikaii/personal": 4,
+                "SynlysAI/private-a": 11,
+                "SynlysAI/private-fork": 100,
+            }[repo.name_with_owner]
+
+        personal, org, total = fetch_radar_metrics(
+            "token",
+            "FangYikaii",
+            "SynlysAI",
+            date(2025, 8, 3),
+            date(2026, 8, 3),
+            user_repos,
+            org_repos,
+            search_counter=fake_search,
+            commit_counter=fake_commits,
+        )
+
+        self.assertEqual(personal.commits, 4)
+        self.assertEqual(org.commits, 11)
+        self.assertEqual(total.commits, 15)
+        self.assertEqual(org.pull_requests, 5)
+        self.assertEqual(total.pull_requests, 7)
+        self.assertEqual(total.repositories, 2)
+
     def test_mixed_day_outputs_two_color_layers(self) -> None:
         """同一天个人和组织贡献同时存在时输出双色分层柱。"""
         group = DayGroup(x=10, y=20, base_y=23, animated=False)
@@ -118,6 +209,41 @@ class GenerateProfileCombinedTest(unittest.TestCase):
         self.assertIn("#27689f", svg)
         self.assertIn("#2da44e", svg)
         self.assertIn("personal 2, SynlysAI 3", svg)
+
+    def test_rewrite_all_theme_svgs_outputs_combined_markers(self) -> None:
+        """所有主题 SVG 都会被后处理成融合图。"""
+        source_svg = Path("profile-3d-contrib/profile-green.svg")
+        stats = ContributionStats(
+            days=(
+                DayContribution(day=date(2026, 8, 1), personal=2, org=3),
+            ),
+            personal_metrics=MetricSet(4, 1, 2, 0, 1),
+            org_metrics=MetricSet(11, 0, 5, 1, 1),
+            total_metrics=MetricSet(15, 1, 7, 1, 2),
+            total_contributions=5,
+            repo_totals=RepoTotals(stars=3, forks=2),
+            languages=(
+                LanguageStat(name="Python", color="#3572A5", count=8),
+            ),
+        )
+
+        with TemporaryDirectory() as tmp_name:
+            profile_dir = Path(tmp_name)
+            for name in ("profile-green.svg", "profile-night-green.svg"):
+                (profile_dir / name).write_text(
+                    source_svg.read_text(encoding="utf-8"),
+                    encoding="utf-8",
+                )
+            rewrite_profile_svgs(profile_dir, stats)
+
+            for svg_path in sorted(profile_dir.glob("*.svg")):
+                svg = svg_path.read_text(encoding="utf-8")
+                self.assertIn("Personal", svg)
+                self.assertIn("SynlysAI", svg)
+                self.assertIn("Total", svg)
+                self.assertIn("#2f78b7", svg)
+                self.assertIn("#2da44e", svg)
+                self.assertNotIn("Contribution Origin", svg)
 
 
 if __name__ == "__main__":

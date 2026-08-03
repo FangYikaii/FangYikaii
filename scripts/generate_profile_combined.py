@@ -8,14 +8,17 @@ import os
 import re
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
+API_ROOT = "https://api.github.com"
 GRAPHQL_URL = "https://api.github.com/graphql"
+ISSUE_SEARCH_URL = f"{API_ROOT}/search/issues"
 DEFAULT_ORG = "SynlysAI"
 DEFAULT_PROFILE_DIR = "profile-3d-contrib"
 DEFAULT_USERNAME = "FangYikaii"
@@ -86,6 +89,16 @@ class RepoTotals:
 
 
 @dataclass(frozen=True)
+class RepositoryInfo:
+    """可见仓库信息。"""
+
+    name_with_owner: str
+    stars: int
+    forks: int
+    is_fork: bool
+
+
+@dataclass(frozen=True)
 class LanguageStat:
     """语言贡献统计。"""
 
@@ -124,6 +137,7 @@ def main() -> int:
             raise RuntimeError("GITHUB_TOKEN is required unless PROFILE_STATS_FIXTURE is set.")
         stats = fetch_contribution_stats(token, username, org, from_day, to_day)
 
+    log_stats(stats, org)
     rewrite_profile_svgs(profile_dir, stats)
     remove_legacy_outputs(profile_dir)
     return 0
@@ -221,8 +235,26 @@ def fetch_contribution_stats(
         },
     )
     user = payload["data"]["user"]
-    repo_totals = fetch_repo_totals(token, username, org)
-    return build_stats(user["total"], user["org"], repo_totals)
+    user_repos = fetch_repo_page_sequence(token, "user", username)
+    org_repos = fetch_repo_page_sequence(token, "organization", org)
+    repo_totals = build_repo_totals(user_repos, org_repos)
+    personal_metrics, org_metrics, total_metrics = fetch_radar_metrics(
+        token,
+        username,
+        org,
+        from_day,
+        to_day,
+        user_repos,
+        org_repos,
+    )
+    return build_stats(
+        user["total"],
+        user["org"],
+        repo_totals,
+        personal_metrics=personal_metrics,
+        org_metrics=org_metrics,
+        total_metrics=total_metrics,
+    )
 
 
 def fetch_org_id(token: str, org: str) -> str:
@@ -252,27 +284,27 @@ def fetch_org_id(token: str, org: str) -> str:
     return str(organization["id"])
 
 
-def fetch_repo_totals(token: str, username: str, org: str) -> RepoTotals:
-    """获取个人仓库和组织仓库的星标、fork 合计。
+def build_repo_totals(
+    user_repos: list[RepositoryInfo],
+    org_repos: list[RepositoryInfo],
+) -> RepoTotals:
+    """汇总个人仓库和组织仓库的星标、fork。
 
     Args:
-        token: GitHub API token。
-        username: GitHub 用户名。
-        org: GitHub 组织名。
+        user_repos: 用户可见仓库。
+        org_repos: 组织可见仓库。
 
     Returns:
         可见仓库整体统计。
     """
-    user_repos = fetch_repo_page_sequence(token, "user", username)
-    org_repos = fetch_repo_page_sequence(token, "organization", org)
-    repos = user_repos + org_repos
+    repos = unique_repositories(user_repos + org_repos)
     return RepoTotals(
-        stars=sum(int(repo.get("stargazerCount") or 0) for repo in repos),
-        forks=sum(int(repo.get("forkCount") or 0) for repo in repos),
+        stars=sum(repo.stars for repo in repos),
+        forks=sum(repo.forks for repo in repos),
     )
 
 
-def fetch_repo_page_sequence(token: str, owner_type: str, login: str) -> list[dict[str, Any]]:
+def fetch_repo_page_sequence(token: str, owner_type: str, login: str) -> list[RepositoryInfo]:
     """分页获取用户或组织仓库。
 
     Args:
@@ -288,7 +320,7 @@ def fetch_repo_page_sequence(token: str, owner_type: str, login: str) -> list[di
     if owner_type == "user":
         repo_args += ", ownerAffiliations: OWNER"
     cursor: str | None = None
-    nodes: list[dict[str, Any]] = []
+    nodes: list[RepositoryInfo] = []
     while True:
         payload = graphql_request(
             token,
@@ -301,7 +333,9 @@ def fetch_repo_page_sequence(token: str, owner_type: str, login: str) -> list[di
                     endCursor
                   }}
                   nodes {{
+                    isFork
                     forkCount
+                    nameWithOwner
                     stargazerCount
                   }}
                 }}
@@ -314,11 +348,38 @@ def fetch_repo_page_sequence(token: str, owner_type: str, login: str) -> list[di
         if not owner:
             break
         repositories = owner["repositories"]
-        nodes.extend(repositories["nodes"])
+        nodes.extend(
+            RepositoryInfo(
+                name_with_owner=str(repo["nameWithOwner"]),
+                stars=int(repo.get("stargazerCount") or 0),
+                forks=int(repo.get("forkCount") or 0),
+                is_fork=bool(repo.get("isFork")),
+            )
+            for repo in repositories["nodes"]
+        )
         if not repositories["pageInfo"]["hasNextPage"]:
             break
         cursor = repositories["pageInfo"]["endCursor"]
     return nodes
+
+
+def unique_repositories(repos: list[RepositoryInfo]) -> list[RepositoryInfo]:
+    """按仓库全名去重，并跳过 fork 仓库。
+
+    Args:
+        repos: 仓库列表。
+
+    Returns:
+        去重后的非 fork 仓库列表。
+    """
+    seen: set[str] = set()
+    result: list[RepositoryInfo] = []
+    for repo in repos:
+        if repo.is_fork or repo.name_with_owner in seen:
+            continue
+        seen.add(repo.name_with_owner)
+        result.append(repo)
+    return result
 
 
 def graphql_request(token: str, query: str, variables: dict[str, Any]) -> dict[str, Any]:
@@ -362,10 +423,227 @@ def graphql_request(token: str, query: str, variables: dict[str, Any]) -> dict[s
     return payload
 
 
+def github_json(token: str, url: str) -> tuple[Any, dict[str, str]]:
+    """请求 GitHub REST JSON API。
+
+    Args:
+        token: GitHub API token。
+        url: REST API 地址。
+
+    Returns:
+        JSON 响应和响应头。
+    """
+    request = urllib.request.Request(
+        url,
+        headers={
+            "Accept": "application/vnd.github+json",
+            "Authorization": f"Bearer {token}",
+            "User-Agent": "FangYikaii-profile-visuals",
+            "X-GitHub-Api-Version": "2022-11-28",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+            headers = dict(response.headers.items())
+    except urllib.error.HTTPError as exc:
+        message = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"GitHub REST failed with HTTP {exc.code}: {message}") from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError(f"GitHub REST failed: {exc}") from exc
+    return payload, headers
+
+
+def fetch_radar_metrics(
+    token: str,
+    username: str,
+    org: str,
+    from_day: date,
+    to_day: date,
+    user_repos: list[RepositoryInfo],
+    org_repos: list[RepositoryInfo],
+    *,
+    search_counter: Callable[[str, str], int] | None = None,
+    commit_counter: Callable[[str, RepositoryInfo, str, date, date], int] | None = None,
+) -> tuple[MetricSet, MetricSet, MetricSet]:
+    """按 Search/REST 口径获取雷达图指标。
+
+    Args:
+        token: GitHub API token。
+        username: GitHub 用户名。
+        org: GitHub 组织名。
+        from_day: 统计起始日期。
+        to_day: 统计结束日期。
+        user_repos: 用户可见仓库。
+        org_repos: 组织可见仓库。
+        search_counter: 测试用 Search API 计数函数。
+        commit_counter: 测试用 commit 计数函数。
+
+    Returns:
+        个人、组织、合计三组雷达指标。
+    """
+    search = search_counter or search_count
+    commit = commit_counter or count_repo_commits
+    org_unique = unique_repositories(org_repos)
+    total_unique = unique_repositories(user_repos + org_repos)
+    total_search = fetch_search_metrics(
+        token,
+        username,
+        org="",
+        from_day=from_day,
+        to_day=to_day,
+        search_counter=search,
+    )
+    org_search = fetch_search_metrics(
+        token,
+        username,
+        org=org,
+        from_day=from_day,
+        to_day=to_day,
+        search_counter=search,
+    )
+    total_metrics = MetricSet(
+        commits=sum(
+            commit(token, repo, username, from_day, to_day)
+            for repo in total_unique
+        ),
+        issues=total_search.issues,
+        pull_requests=total_search.pull_requests,
+        reviews=total_search.reviews,
+        repositories=len(total_unique),
+    )
+    org_metrics = MetricSet(
+        commits=sum(
+            commit(token, repo, username, from_day, to_day)
+            for repo in org_unique
+        ),
+        issues=org_search.issues,
+        pull_requests=org_search.pull_requests,
+        reviews=org_search.reviews,
+        repositories=len(org_unique),
+    )
+    personal_metrics = subtract_metrics(total_metrics, org_metrics)
+    merged_total = add_metrics(personal_metrics, org_metrics)
+    return personal_metrics, org_metrics, merged_total
+
+
+def fetch_search_metrics(
+    token: str,
+    username: str,
+    org: str,
+    from_day: date,
+    to_day: date,
+    search_counter: Callable[[str, str], int] | None = None,
+) -> MetricSet:
+    """用 GitHub Search API 获取 issue、PR、review 指标。
+
+    Args:
+        token: GitHub API token。
+        username: GitHub 用户名。
+        org: GitHub 组织名，空字符串表示不限定组织。
+        from_day: 统计起始日期。
+        to_day: 统计结束日期。
+        search_counter: 测试用 Search API 计数函数。
+
+    Returns:
+        仅 issue、PR、review 有值的指标集合。
+    """
+    search = search_counter or search_count
+    org_prefix = f"org:{org} " if org else ""
+    created_range = f"created:{from_day.isoformat()}..{to_day.isoformat()}"
+    updated_range = f"updated:{from_day.isoformat()}..{to_day.isoformat()}"
+    return MetricSet(
+        commits=0,
+        issues=search(
+            token,
+            f"{org_prefix}is:issue author:{username} {created_range}",
+        ),
+        pull_requests=search(
+            token,
+            f"{org_prefix}is:pr author:{username} {created_range}",
+        ),
+        reviews=search(
+            token,
+            f"{org_prefix}is:pr reviewed-by:{username} {updated_range}",
+        ),
+        repositories=0,
+    )
+
+
+def search_count(token: str, query: str) -> int:
+    """获取 GitHub issue search 的 total_count。
+
+    Args:
+        token: GitHub API token。
+        query: GitHub search 查询语句。
+
+    Returns:
+        匹配结果数量。
+    """
+    params = urllib.parse.urlencode({"q": query, "per_page": 1})
+    payload, _headers = github_json(token, f"{ISSUE_SEARCH_URL}?{params}")
+    if not isinstance(payload, dict):
+        return 0
+    return int(payload.get("total_count") or 0)
+
+
+def count_repo_commits(
+    token: str,
+    repo: RepositoryInfo,
+    username: str,
+    from_day: date,
+    to_day: date,
+) -> int:
+    """统计指定仓库中指定作者的提交数量。
+
+    Args:
+        token: GitHub API token。
+        repo: 仓库信息。
+        username: GitHub 用户名。
+        from_day: 统计起始日期。
+        to_day: 统计结束日期。
+
+    Returns:
+        提交数量。
+    """
+    query = urllib.parse.urlencode(
+        {
+            "author": username,
+            "since": f"{from_day.isoformat()}T00:00:00Z",
+            "until": f"{to_day.isoformat()}T23:59:59Z",
+            "per_page": 1,
+        }
+    )
+    url = f"{API_ROOT}/repos/{repo.name_with_owner}/commits?{query}"
+    try:
+        payload, headers = github_json(token, url)
+    except RuntimeError:
+        return 0
+    last_page = parse_last_page(headers.get("Link", ""))
+    if last_page is not None:
+        return last_page
+    if isinstance(payload, list):
+        return len(payload)
+    return 0
+
+
+def parse_last_page(link_header: str) -> int | None:
+    """从 GitHub Link 响应头读取最后一页页码。"""
+    for part in link_header.split(","):
+        match = re.search(r'<[^>]*[?&]page=(\d+)[^>]*>;\s*rel="last"', part)
+        if match:
+            return int(match.group(1))
+    return None
+
+
 def build_stats(
     total_collection: dict[str, Any],
     org_collection: dict[str, Any],
     repo_totals: RepoTotals,
+    *,
+    personal_metrics: MetricSet | None = None,
+    org_metrics: MetricSet | None = None,
+    total_metrics: MetricSet | None = None,
 ) -> ContributionStats:
     """合并总贡献和组织贡献，得到个人/组织拆分。
 
@@ -373,6 +651,9 @@ def build_stats(
         total_collection: 用户总 contributionsCollection。
         org_collection: 组织过滤 contributionsCollection。
         repo_totals: 可见仓库整体统计。
+        personal_metrics: 外部雷达个人指标。
+        org_metrics: 外部雷达组织指标。
+        total_metrics: 外部雷达合计指标。
 
     Returns:
         融合后的贡献统计。
@@ -391,9 +672,10 @@ def build_stats(
             )
         )
 
-    org_metrics = collection_metrics(org_collection)
-    total_metrics = collection_metrics(total_collection)
-    personal_metrics = subtract_metrics(total_metrics, org_metrics)
+    if personal_metrics is None or org_metrics is None or total_metrics is None:
+        org_metrics = collection_metrics(org_collection)
+        total_metrics = collection_metrics(total_collection)
+        personal_metrics = subtract_metrics(total_metrics, org_metrics)
     merged_total = add_metrics(personal_metrics, org_metrics)
     languages = merged_languages(total_collection, org_collection)
     return ContributionStats(
@@ -1056,6 +1338,42 @@ def load_stats_fixture(path: Path) -> ContributionStats:
             for item in payload.get("languages", [])
         ),
     )
+
+
+def log_stats(stats: ContributionStats, org: str) -> None:
+    """输出融合统计摘要，供 GitHub Actions 日志审计。
+
+    Args:
+        stats: 融合后的贡献统计。
+        org: GitHub 组织名。
+    """
+    print("Combined profile contribution stats")
+    print_metric_line("Personal", stats.personal_metrics, personal_contributions(stats))
+    print_metric_line(org, stats.org_metrics, org_contributions(stats))
+    print_metric_line("Total", stats.total_metrics, stats.total_contributions)
+
+
+def print_metric_line(label: str, metrics: MetricSet, contributions: int) -> None:
+    """输出单行雷达指标。"""
+    print(
+        f"{label}: "
+        f"Commit={metrics.commits}, "
+        f"Issue={metrics.issues}, "
+        f"PullReq={metrics.pull_requests}, "
+        f"Review={metrics.reviews}, "
+        f"Repo={metrics.repositories}, "
+        f"contributions={contributions}"
+    )
+
+
+def personal_contributions(stats: ContributionStats) -> int:
+    """返回个人日历贡献数。"""
+    return sum(day.personal for day in stats.days)
+
+
+def org_contributions(stats: ContributionStats) -> int:
+    """返回组织日历贡献数。"""
+    return sum(day.org for day in stats.days)
 
 
 def fmt(value: float) -> str:
